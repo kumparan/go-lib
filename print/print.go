@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-	"github.com/lab46/example/pkg/errors"
+	"github.com/kumparan/go-lib/errors"
 )
 
 // this package is used to produce pretty print output

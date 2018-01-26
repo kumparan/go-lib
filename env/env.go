@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/lab46/example/pkg/log"
+	"github.com/kumparan/go-lib/log"
 )
 
 type ServiceEnv string

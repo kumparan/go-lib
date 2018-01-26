@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/lab46/example/pkg/log"
+	"github.com/kumparan/go-lib/log"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

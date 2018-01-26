@@ -3,7 +3,7 @@ package env_test
 import (
 	"testing"
 
-	"github.com/lab46/example/pkg/env"
+	"github.com/kumparan/go-lib/env"
 )
 
 func TestSetAndGetConfigDir(t *testing.T) {

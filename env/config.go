@@ -7,7 +7,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/lab46/example/pkg/log"
+	"github.com/kumparan/go-lib/log"
 	yaml "gopkg.in/yaml.v2"
 )
 

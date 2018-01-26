@@ -3,7 +3,7 @@ package log
 import (
 	"strings"
 
-	"github.com/lab46/example/pkg/errors"
+	"github.com/kumparan/go-lib/errors"
 	"go.uber.org/zap"
 )
 

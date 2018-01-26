@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lab46/example/pkg/env"
-	"github.com/lab46/example/pkg/log"
-	"github.com/lab46/example/pkg/router"
+	"github.com/kumparan/go-lib/env"
+	"github.com/kumparan/go-lib/log"
+	"github.com/kumparan/go-lib/router"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

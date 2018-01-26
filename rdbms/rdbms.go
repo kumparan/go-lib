@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/lab46/example/pkg/log"
+	"github.com/kumparan/go-lib/log"
 	_ "github.com/lib/pq"
 )
 
