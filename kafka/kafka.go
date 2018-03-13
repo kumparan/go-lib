@@ -41,7 +41,7 @@ func Publish(msg Message) error {
 func Consume(topic string, callback func([]byte)) (offset int64, err error) {
 
 	log.Infof("Start consuming topic: %v", topic)
-	partitionConsumer, err := kafkaConsumer.ConsumePartition(topic, 0, 0)
+	partitionConsumer, err := kafkaConsumer.ConsumePartition(topic, 0, -1)
 	if err != nil {
 		log.Infof("Error receive: %v", err)
 	}
