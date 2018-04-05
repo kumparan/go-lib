@@ -4,6 +4,13 @@ import (
 	redigo "github.com/garyburd/redigo/redis"
 )
 
+// Delete string value
+func (r Redis) Delete(key string) (string, error) {
+	conn := r.Pool.Get()
+	defer conn.Close()
+	return redigo.String(conn.Do("DEL", key))
+}
+
 // Get string value
 func (r Redis) Get(key string) (string, error) {
 	conn := r.Pool.Get()
@@ -16,6 +23,21 @@ func (r Redis) Set(key, value string, expire int) (string, error) {
 	conn := r.Pool.Get()
 	defer conn.Close()
 	return redigo.String(conn.Do("SET", key, value))
+}
+
+// HSet key and value
+func (r Redis) HSet(key, key2 string, value string) (string, error) {
+	conn := r.Pool.Get()
+	defer conn.Close()
+	return redigo.String(conn.Do("HSET", key, key2, value))
+}
+
+// HGet key
+func (r Redis) HGet(key string, key2 string) (string, error) {
+	conn := r.Pool.Get()
+	defer conn.Close()
+	return redigo.String(conn.Do("HGET", key, key2))
+
 }
 
 // SetWithNX with NX params
