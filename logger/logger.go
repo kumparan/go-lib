@@ -94,7 +94,15 @@ func SetupLoggerAuto(appName string, ptEndpoint string) {
 }
 
 // Warn prints warning message to logs
-func Warn(format string, v ...interface{}) {
+func Warn(v ...interface{}) {
+	if getActiveLogLevel() >= logLevel[LogLevelWarning] {
+		message := fmt.Sprintf("\033[33mWARN : \033[0m%s", fmt.Sprint(v...))
+		log.Print(message)
+	}
+}
+
+// Warnf prints warning message to logs with formatting
+func Warnf(format string, v ...interface{}) {
 	if getActiveLogLevel() >= logLevel[LogLevelWarning] {
 		message := fmt.Sprintf("\033[33mWARN : \033[0m"+format, v...)
 		log.Print(message)
@@ -102,7 +110,15 @@ func Warn(format string, v ...interface{}) {
 }
 
 // Trace prints trace message to logs
-func Trace(format string, v ...interface{}) {
+func Trace(v ...interface{}) {
+	if getActiveLogLevel() >= logLevel[LogLevelTrace] {
+		message := fmt.Sprintf("TRACE: %s", fmt.Sprint(v...))
+		log.Print(message)
+	}
+}
+
+// Tracef prints trace message to logs with formatting
+func Tracef(format string, v ...interface{}) {
 	if getActiveLogLevel() >= logLevel[LogLevelTrace] {
 		message := fmt.Sprintf("TRACE: "+format, v...)
 		log.Print(message)
@@ -110,7 +126,15 @@ func Trace(format string, v ...interface{}) {
 }
 
 // Debug prints debug message to logs
-func Debug(format string, v ...interface{}) {
+func Debug(v ...interface{}) {
+	if getActiveLogLevel() >= logLevel[LogLevelDebug] {
+		message := fmt.Sprintf("DEBUG: %s", fmt.Sprint(v...))
+		log.Print(message)
+	}
+}
+
+// Debugf prints debug message to logs with formatting
+func Debugf(format string, v ...interface{}) {
 	if getActiveLogLevel() >= logLevel[LogLevelDebug] {
 		message := fmt.Sprintf("DEBUG: "+format, v...)
 		log.Print(message)
@@ -118,7 +142,15 @@ func Debug(format string, v ...interface{}) {
 }
 
 // Info prints info message to logs
-func Info(format string, v ...interface{}) {
+func Info(v ...interface{}) {
+	if getActiveLogLevel() >= logLevel[LogLevelInfo] {
+		message := fmt.Sprintf("\033[32mINFO : \033[0m%s", fmt.Sprint(v...))
+		log.Print(message)
+	}
+}
+
+// Infof prints info message to logs with formatting
+func Infof(format string, v ...interface{}) {
 	if getActiveLogLevel() >= logLevel[LogLevelInfo] {
 		message := fmt.Sprintf("\033[32mINFO : \033[0m"+format, v...)
 		log.Print(message)
@@ -126,7 +158,16 @@ func Info(format string, v ...interface{}) {
 }
 
 // Err prints error message to logs
-func Err(format string, v ...interface{}) {
+func Err(v ...interface{}) {
+	if getActiveLogLevel() >= logLevel[LogLevelError] {
+		message := []interface{}{fmt.Sprintf("\033[31mERROR: \033[0m%s", fmt.Sprint(v...))}
+		message = append(message, "\n", string(debug.Stack()))
+		log.Print(message...)
+	}
+}
+
+// Errf prints error message to logs with formatting
+func Errf(format string, v ...interface{}) {
 	if getActiveLogLevel() >= logLevel[LogLevelError] {
 		message := []interface{}{fmt.Sprintf("\033[31mERROR: \033[0m"+format, v...)}
 		message = append(message, "\n", string(debug.Stack()))
@@ -135,7 +176,13 @@ func Err(format string, v ...interface{}) {
 }
 
 // Fatal calls Err and then os.Exit(1)
-func Fatal(format string, v ...interface{}) {
-	Err(format, v...)
+func Fatal(v ...interface{}) {
+	Err(v...)
+	os.Exit(1)
+}
+
+// Fatalf calls Err and then os.Exit(1) with formatting
+func Fatalf(format string, v ...interface{}) {
+	Errf(format, v...)
 	os.Exit(1)
 }
