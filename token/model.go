@@ -9,5 +9,7 @@ type UserMap struct {
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Status   string `json:"status"`
+	Level    int `json:"level"`
+	Role   	 string 
 	jwt.StandardClaims
 }

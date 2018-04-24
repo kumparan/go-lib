@@ -41,6 +41,8 @@ func JwtParse(myToken string, jwtsecret string) (*UserMap, error) {
 	})
 
 	claims := token.Claims.(*UserMap)
+	claims.Role = getRole(claims.Level)
 
 	return claims, err
 }
+
