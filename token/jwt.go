@@ -35,14 +35,17 @@ func Get(c *gin.Context, jwtsecret string) (*UserMap, error) {
 	return user, err
 }
 
-func JwtParse(myToken string, jwtsecret string) (*UserMap, error) {
+func JwtParse(myToken string, jwtsecret string) (claims *UserMap, err error) {
 	token, err := jwt.ParseWithClaims(myToken, &UserMap{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtsecret), nil
 	})
 
-	claims := token.Claims.(*UserMap)
-	claims.Role = getRole(claims.Level)
+	if err != nil {
+		return 
+	}
 
-	return claims, err
+	claims = token.Claims.(*UserMap)
+	claims.Role = getRole(claims.Level)
+	return
 }
 
