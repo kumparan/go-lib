@@ -19,7 +19,7 @@ const (
 	ErrorUndefined           = "Undefined Error"
 )
 
-var errorHttpMap = map[string]int64{
+var errorHttpMap = map[string]int{
 	ErrorBadRequest:          http.StatusBadRequest,
 	ErrorUnauthorized:        http.StatusUnauthorized,
 	ErrorForbidden:           http.StatusForbidden,
@@ -34,7 +34,7 @@ var errorHttpMap = map[string]int64{
 	ErrorUndefined:           http.StatusUnprocessableEntity,
 }
 
-func GetHttpStatus(e string) int64 {
+func GetHttpStatus(e string) int {
 	if errorHttpMap[e] != 0 {
 		return errorHttpMap[e]
 	}
