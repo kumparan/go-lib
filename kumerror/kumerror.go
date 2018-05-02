@@ -5,22 +5,21 @@ import (
 )
 
 const (
-	_                        = iota
-	ErrorBadRequest          // 400
-	ErrorUnauthorized        // 401
-	ErrorForbidden           // 403
-	ErrorNotFound            // 404
-	ErrorRequestTimeout      // 408
-	ErrorConflict            // 409
-	ErrorUnprocessableEntity // 422
-	ErrorInternalServer      // 500
-	ErrorNotImplemented      // 501
-	ErrorBadGateway          // 502
-	ErrorServiceUnavailable  // 503
-	ErrorUndefined
+	ErrorBadRequest          = "Bad Request"           //400
+	ErrorUnauthorized        = "Unauthorized"          // 401
+	ErrorForbidden           = "Forbidden"             // 403
+	ErrorNotFound            = "Not Found"             // 404
+	ErrorRequestTimeout      = "Request Timeout"       // 408
+	ErrorConflict            = "Conflict"              // 409
+	ErrorUnprocessableEntity = "Unprocessable Entity"  // 422
+	ErrorInternalServer      = "Internal Server Error" // 500
+	ErrorNotImplemented      = "Not Implemented"       // 501
+	ErrorBadGateway          = "Bad Gateway"           // 502
+	ErrorServiceUnavailable  = "Service Unavailable"   // 503
+	ErrorUndefined           = "Undefined Error"
 )
 
-var errorHttpMap = map[int64]int64{
+var errorHttpMap = map[string]int64{
 	ErrorBadRequest:          http.StatusBadRequest,
 	ErrorUnauthorized:        http.StatusUnauthorized,
 	ErrorForbidden:           http.StatusForbidden,
@@ -35,7 +34,7 @@ var errorHttpMap = map[int64]int64{
 	ErrorUndefined:           http.StatusUnprocessableEntity,
 }
 
-func GetHttpStatus(e int64) int64 {
+func GetHttpStatus(e string) int64 {
 	if errorHttpMap[e] != 0 {
 		return errorHttpMap[e]
 	}
