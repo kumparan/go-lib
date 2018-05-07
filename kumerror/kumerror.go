@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	ErrorBadRequest          = "Bad Request"           //400
+	ErrorValidation          = "ValidationError"       // 400
+	ErrorBadRequest          = "Bad Request"           // 400
 	ErrorUnauthorized        = "Unauthorized"          // 401
 	ErrorForbidden           = "Forbidden"             // 403
 	ErrorNotFound            = "Not Found"             // 404
@@ -20,6 +21,7 @@ const (
 )
 
 var errorHttpMap = map[string]int{
+	ErrorValidation:          http.StatusBadRequest,
 	ErrorBadRequest:          http.StatusBadRequest,
 	ErrorUnauthorized:        http.StatusUnauthorized,
 	ErrorForbidden:           http.StatusForbidden,
