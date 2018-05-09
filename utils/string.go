@@ -35,7 +35,7 @@ func String2Int64(s string) int64 {
 	return i
 }
 
-// String2Int64 :nodoc:
+// String2Int64WithDefault :nodoc:
 func String2Int64WithDefault(s string, d int64) int64 {
 	i := String2Int64(s)
 	if i == 0 {
