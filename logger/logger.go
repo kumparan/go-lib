@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"runtime/debug"
-	"strings"
 
 	syslog "github.com/RackSec/srslog"
 )
@@ -27,13 +26,12 @@ var logLevel = map[string]int{
 	LogLevelError:   1,
 }
 
-var ptSystemName string
+var ptSystemName, activeLogLevel string
 
-var activeLogLevel = strings.ToUpper(os.Getenv("LOG_LEVEL"))
-
-func parseLogLevel() string {
-	switch activeLogLevel {
+func parseLogLevel(logLevelStr string) string {
+	switch logLevelStr {
 	case LogLevelTrace, LogLevelDebug, LogLevelInfo, LogLevelWarning, LogLevelError:
+		activeLogLevel = logLevelStr
 	default:
 		activeLogLevel = LogLevelTrace
 	}
@@ -44,34 +42,13 @@ func getActiveLogLevel() int {
 	return logLevel[activeLogLevel]
 }
 
-// SetupLogger creates logger instance to log to PaperTrail and Console. Should only called once in main function.
-func SetupLogger(ptHost string, ptPort string, logLevel int) {
-	activeLogLevel = parseLogLevel()
-	log.SetPrefix("")
-	log.SetFlags(0)
-
-	if ptHost != "" {
-		hostname, _ := os.Hostname()
-		ptEndpoint := fmt.Sprintf("%s:%s", ptHost, ptPort)
-		ptWriter, err := syslog.Dial("udp", ptEndpoint, syslog.LOG_INFO, hostname)
-
-		if err != nil {
-			log.Fatal("Can't connect to PaperTrail ...")
-		}
-
-		log.SetOutput(io.MultiWriter(os.Stdout, ptWriter))
-	} else {
-		log.Print("No papertrail transport detected. Logger only use local stdout")
-	}
-}
-
 func formatterRFC3164(p syslog.Priority, hostname, tag, content string) string {
 	return syslog.RFC3164Formatter(p, ptSystemName, hostname, content)
 }
 
 // SetupLoggerAuto creates logger instance to log to PaperTrail automatically without specifying PT HOST and PORT
-func SetupLoggerAuto(appName string, ptEndpoint string) {
-	activeLogLevel = parseLogLevel()
+func SetupLoggerAuto(appName string, ptEndpoint string, logLevelStr string) {
+	parseLogLevel(logLevelStr)
 	log.SetPrefix("")
 	log.SetFlags(0)
 
