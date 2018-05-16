@@ -6,7 +6,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gomodule/redigo"
+	redigo "github.com/gomodule/redigo/redis"
 )
 
 var (
