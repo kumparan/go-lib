@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	redigo "github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo"
 )
 
 // Ping nodoc
