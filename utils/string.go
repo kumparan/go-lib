@@ -26,9 +26,9 @@ func UnescapeString(str string) (ustr string) {
 // String2Bool :nodoc:
 func String2Bool(s string) bool {
 	if s != "" {
-		i, err := strconv.Atoi(s)
+		i, err := strconv.ParseBool(s)
 		if err == nil {
-			return i == 0
+			return i
 		}
 	}
 	return false
