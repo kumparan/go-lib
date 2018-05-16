@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -13,6 +14,13 @@ func StandardizeSpaces(s string) string {
 // GenerateSlug  -> Replace space with dash, lower it, and trim the space
 func GenerateSlug(inputStr string) string {
 	return strings.Trim(strings.ToLower(strings.Replace(inputStr, " ", "-", -1)), " ")
+}
+
+// UnescapeString UTF-8 string
+// e.g. convert "\u0e27\u0e23\u0e0d\u0e32" to "วรญา"
+func UnescapeString(str string) (ustr string) {
+	json.Unmarshal([]byte(`"`+str+`"`), &ustr)
+	return
 }
 
 // String2Bool :nodoc:
