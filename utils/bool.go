@@ -21,3 +21,7 @@ func IsNumeric(s string) bool {
 
 	return true
 }
+
+func Bool2String(b bool) string {
+	return strconv.FormatBool(b)
+}
