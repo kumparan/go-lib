@@ -1,6 +1,9 @@
 package utils
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 // PageOrDefault -> Check page value, and return 1 if page is not defined
 func PageOrDefault(page int64) int64 {
@@ -19,4 +22,9 @@ func LimitOrDefault(limit int64) (int64, error) {
 		return 0, errors.New("Limit Value should be between 1 and 100")
 	}
 	return limit, nil
+}
+
+func Int642String(i int64) string {
+	s := strconv.FormatInt(i, 10)
+	return s
 }
