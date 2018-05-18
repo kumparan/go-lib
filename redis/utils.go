@@ -208,3 +208,15 @@ func SRem(key string, value string) {
 		log.Println("ERROR SREM:" + key + ":" + err.Error())
 	}
 }
+
+// RPUSH :nodoc:
+func RPUSH(key string, value string) {
+	client := Pool.Get()
+	defer client.Close()
+
+	_, err := client.Do("RPUSH", key, value)
+
+	if err != nil {
+		log.Println("ERROR RPUSH:" + key + ":" + err.Error())
+	}
+}
