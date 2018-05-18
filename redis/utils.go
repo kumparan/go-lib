@@ -166,7 +166,9 @@ func SAdd(key string, value string, redisTTL int64) {
 		log.Println("ERROR SADD:" + key + ":" + err.Error())
 	}
 
-	Expire(key, redisTTL)
+	if redisTTL > 0 {
+		Expire(key, redisTTL)
+	}
 }
 
 // SMembers nodoc
