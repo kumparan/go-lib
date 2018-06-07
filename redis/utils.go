@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/garyburd/redigo/redis"
 	redigo "github.com/gomodule/redigo/redis"
 )
 
@@ -101,6 +102,23 @@ func Get(key string) string {
 	}
 
 	return content
+}
+
+// DeletePrefix nodoc
+func DeletePrefix(key string) {
+	client := Pool.Get()
+	defer client.Close()
+
+	keys, err := redis.Strings(client.Do("KEYS", key))
+
+	if err != nil {
+		log.Println("ERROR KEYS:" + key + ":" + err.Error())
+	}
+
+	for _, v := range keys {
+		Delete(v)
+	}
+
 }
 
 // Delete nodoc
