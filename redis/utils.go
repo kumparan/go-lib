@@ -184,7 +184,9 @@ func SAdd(key string, value string, redisTTL int64) {
 		log.Println("ERROR SADD:" + key + ":" + err.Error())
 	}
 
-	Expire(key, redisTTL)
+	if redisTTL > 0 {
+		Expire(key, redisTTL)
+	}
 }
 
 // SMembers nodoc
@@ -224,5 +226,17 @@ func SRem(key string, value string) {
 
 	if err != nil {
 		log.Println("ERROR SREM:" + key + ":" + err.Error())
+	}
+}
+
+// RPUSH :nodoc:
+func RPUSH(key string, value string) {
+	client := Pool.Get()
+	defer client.Close()
+
+	_, err := client.Do("RPUSH", key, value)
+
+	if err != nil {
+		log.Println("ERROR RPUSH:" + key + ":" + err.Error())
 	}
 }
