@@ -22,7 +22,7 @@ func Init(redisHost string) {
 
 // InitWithURL initialize Redis Pool with url
 func InitWithURL(url string) {
-	Pool = newPoolWithURL(utl)
+	Pool = newPoolWithURL(url)
 	cleanupHook()
 }
 
