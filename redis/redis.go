@@ -16,19 +16,21 @@ var (
 
 // Init initialize Redis Pool
 func Init(redisHost string) {
-
 	Pool = newPool(redisHost)
 	cleanupHook()
 }
 
+// InitWithURL initialize Redis Pool with url
+func InitWithURL(url string) {
+	Pool = newPoolWithURL(utl)
+	cleanupHook()
+}
+
 func newPool(server string) *redigo.Pool {
-
 	return &redigo.Pool{
-
 		MaxIdle:     100,
 		MaxActive:   10000,
 		IdleTimeout: 240 * time.Second,
-
 		Dial: func() (redigo.Conn, error) {
 			c, err := redigo.Dial("tcp", server)
 			if err != nil {
@@ -36,7 +38,25 @@ func newPool(server string) *redigo.Pool {
 			}
 			return c, err
 		},
+		TestOnBorrow: func(c redigo.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
+	}
+}
 
+func newPoolWithURL(server string) *redigo.Pool {
+	return &redigo.Pool{
+		MaxIdle:     100,
+		MaxActive:   10000,
+		IdleTimeout: 240 * time.Second,
+		Dial: func() (redigo.Conn, error) {
+			c, err := redigo.DialURL(server)
+			if err != nil {
+				return nil, err
+			}
+			return c, err
+		},
 		TestOnBorrow: func(c redigo.Conn, t time.Time) error {
 			_, err := c.Do("PING")
 			return err
@@ -45,7 +65,6 @@ func newPool(server string) *redigo.Pool {
 }
 
 func cleanupHook() {
-
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, syscall.SIGTERM)
