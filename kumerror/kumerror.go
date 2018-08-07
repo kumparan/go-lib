@@ -33,12 +33,12 @@ var errorHttpMap = map[string]int{
 	ErrorNotImplemented:      http.StatusNotImplemented,
 	ErrorBadGateway:          http.StatusBadGateway,
 	ErrorServiceUnavailable:  http.StatusServiceUnavailable,
-	ErrorUndefined:           http.StatusUnprocessableEntity,
+	ErrorUndefined:           http.StatusInternalServerError,
 }
 
 func GetHttpStatus(e string) int {
 	if errorHttpMap[e] != 0 {
 		return errorHttpMap[e]
 	}
-	return http.StatusUnprocessableEntity
+	return http.StatusInternalServerError
 }
