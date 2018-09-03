@@ -47,7 +47,7 @@ func Execute(command string, key string, value string) interface{} {
 		content, err = redigo.Values(client.Do(command, key))
 	}
 
-	if err != nil {
+	if err != nil && err != redis.ErrNil {
 		log.Println("ERROR:" + err.Error())
 	}
 
@@ -61,8 +61,8 @@ func Expire(key string, redisTTL int64) {
 
 	_, err := client.Do("EXPIRE", key, redisTTL)
 
-	if err != nil {
-		log.Println("ERROR EXPIRE:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR EXPIRE: " + key + "; " + err.Error())
 	}
 }
 
@@ -73,8 +73,8 @@ func Set(key string, value string, redisTTL int64) {
 
 	_, err := client.Do("SET", key, value)
 
-	if err != nil {
-		log.Println("ERROR SET:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR SET: " + key + "; " + err.Error())
 	}
 
 	Expire(key, redisTTL)
@@ -86,8 +86,8 @@ func Get(key string) string {
 	defer client.Close()
 
 	isExists, err := redigo.Int(client.Do("EXISTS", key))
-	if err != nil {
-		log.Println("ERROR EXISTS: " + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR EXISTS: " + key + "; " + err.Error())
 	}
 
 	if isExists == 0 {
@@ -97,8 +97,8 @@ func Get(key string) string {
 
 	content, err := redigo.String(client.Do("GET", key))
 
-	if err != nil {
-		log.Println("ERROR GET:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR GET: " + key + "; " + err.Error())
 	}
 
 	return content
@@ -111,8 +111,8 @@ func DeletePrefix(key string) {
 
 	keys, err := redis.Strings(client.Do("KEYS", key))
 
-	if err != nil {
-		log.Println("ERROR KEYS:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR KEYS: " + key + "; " + err.Error())
 	}
 
 	for _, v := range keys {
@@ -129,8 +129,8 @@ func Delete(key string) {
 
 	_, err := client.Do("DEL", key)
 
-	if err != nil {
-		log.Println("ERROR DEL:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR DEL: " + key + "; " + err.Error())
 	}
 
 }
@@ -143,8 +143,8 @@ func HSet(key string, key2 string, value string, redisTTL int64) {
 	_, err := client.Do("HSET",
 		key, key2, value)
 
-	if err != nil {
-		log.Println("ERROR HSET:" + key + ":" + key2 + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR HSET: " + key + "; " + key2 + "; " + err.Error())
 	}
 
 	Expire(key, redisTTL)
@@ -156,15 +156,15 @@ func HGet(key string, key2 string) string {
 	defer client.Close()
 
 	n, err := client.Do("HGET", key, key2)
-	if err != nil {
-		log.Println("ERROR HGET1:" + key + ":" + key2 + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR HGET1: " + key + "; " + key2 + "; " + err.Error())
 	}
 
 	if n != nil {
 		content, err := redigo.String(client.Do("HGET", key, key2))
 
-		if err != nil {
-			log.Println("ERROR HGET2:" + key + ":" + key2 + ":" + err.Error())
+		if err != nil && err != redis.ErrNil {
+			log.Println("ERROR HGET2: " + key + "; " + key2 + "; " + err.Error())
 		}
 
 		return content
@@ -180,8 +180,8 @@ func SAdd(key string, value string, redisTTL int64) {
 
 	_, err := client.Do("SADD", key, value)
 
-	if err != nil {
-		log.Println("ERROR SADD:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR SADD: " + key + "; " + err.Error())
 	}
 
 	if redisTTL > 0 {
@@ -196,8 +196,8 @@ func SMembers(key string) interface{} {
 
 	content, err := redigo.Values(client.Do("SMEMBERS", key))
 
-	if err != nil {
-		log.Println("ERROR SMEMBERS:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR SMEMBERS: " + key + "; " + err.Error())
 	}
 
 	return content
@@ -210,8 +210,8 @@ func SISMember(key string, value string) int {
 
 	content, err := redigo.Int(client.Do("SISMEMBER", key, value))
 
-	if err != nil {
-		log.Println("ERROR SISMEMBER:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR SISMEMBER: " + key + "; " + err.Error())
 	}
 
 	return content
@@ -224,8 +224,8 @@ func SRem(key string, value string) {
 
 	_, err := client.Do("SREM", key, value)
 
-	if err != nil {
-		log.Println("ERROR SREM:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR SREM: " + key + "; " + err.Error())
 	}
 }
 
@@ -236,7 +236,7 @@ func RPUSH(key string, value string) {
 
 	_, err := client.Do("RPUSH", key, value)
 
-	if err != nil {
-		log.Println("ERROR RPUSH:" + key + ":" + err.Error())
+	if err != nil && err != redis.ErrNil {
+		log.Println("ERROR RPUSH: " + key + "; " + err.Error())
 	}
 }
