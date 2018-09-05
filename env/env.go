@@ -2,11 +2,12 @@ package env
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/joho/godotenv"
+	"github.com/kumparan/go-lib/logger"
 	"os"
 	"runtime"
 	"strings"
-
-	"github.com/kumparan/go-lib/log"
 )
 
 type ServiceEnv string
@@ -28,7 +29,7 @@ var (
 func init() {
 	err := SetFromEnvFile(".env")
 	if err != nil {
-		log.Debug(err)
+		logger.Debug(err)
 	}
 	goVersion = runtime.Version()
 }
@@ -102,4 +103,13 @@ func GetCurrentBuild() string {
 // GetGoVersion to return current build go version
 func GetGoVersion() string {
 	return goVersion
+}
+
+// LoadEnv Load environment from a file name set in in an environment
+func LoadEnv(envName string) (err error) {
+	envFile, envExist := os.LookupEnv(envName)
+	if envExist {
+		fmt.Printf("Loading environment from %s\n", envFile)
+		err = godotenv.Load(envFile)
+	}
 }

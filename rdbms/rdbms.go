@@ -3,12 +3,12 @@ package rdbms
 import (
 	"context"
 	"fmt"
+	"github.com/kumparan/go-lib/logger"
 	"sync/atomic"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/kumparan/go-lib/log"
 	_ "github.com/lib/pq"
 )
 
@@ -34,7 +34,7 @@ func Open(driver string, config Config) (*sqlx.DB, error) {
 		db := &sqlx.DB{}
 		return db, nil
 	}
-	log.Debugf("[rdbms][config] %+v", config)
+	logger.Debugf("[rdbms][config] %+v", config)
 
 	var (
 		err error
@@ -49,13 +49,13 @@ func Open(driver string, config Config) (*sqlx.DB, error) {
 			break
 		} else {
 			// log error
-			log.Warnf("[rdbms][failed] failed to connect to %s with error %s", config.DSN, err.Error())
+			logger.Warnf("[rdbms][failed] failed to connect to %s with error %s", config.DSN, err.Error())
 		}
 		// continue with condition
 		cancel()
-		log.Info("[rdbms][retry] retrying to connect to %s", config.DSN)
+		logger.Info("[rdbms][retry] retrying to connect to %s", config.DSN)
 		if x+1 == config.Retry && err != nil {
-			log.Errorf("[rdbms][error] retry time exhausted, cannot connect to database: %s", err.Error())
+			logger.Errf("[rdbms][error] retry time exhausted, cannot connect to database: %s", err.Error())
 			return nil, fmt.Errorf("Failed connect to database: %s", err.Error())
 		}
 		// sleep for 5 secs everytime retries

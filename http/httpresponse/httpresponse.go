@@ -2,9 +2,8 @@ package httpresponse
 
 import (
 	"encoding/json"
+	"github.com/kumparan/go-lib/logger"
 	"net/http"
-
-	"github.com/kumparan/go-lib/log"
 )
 
 var (
@@ -34,7 +33,7 @@ func InternalServerError(w http.ResponseWriter, errString ...string) {
 	}
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Errorf("Failed to marshal message string in Internal Server Error: %s", err.Error())
+		logger.Errf("Failed to marshal message string in Internal Server Error: %s", err.Error())
 		jsonResp = internalServerErrorResp
 	}
 	w.WriteHeader(status)
@@ -48,7 +47,7 @@ func BadRequest(w http.ResponseWriter, errString ...string) {
 	}
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Errorf("Failed to marshal message string in Bad Request : %s", err.Error())
+		logger.Errf("Failed to marshal message string in Bad Request : %s", err.Error())
 		jsonResp = internalServerErrorResp
 		status = http.StatusInternalServerError
 	}
@@ -63,7 +62,7 @@ func WithData(w http.ResponseWriter, data interface{}) {
 	}
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Errorf("Failed to marshal message string in WithData: %s", err.Error())
+		logger.Errf("Failed to marshal message string in WithData: %s", err.Error())
 		jsonResp = internalServerErrorResp
 		status = http.StatusInternalServerError
 	}
@@ -75,7 +74,7 @@ func WithObject(w http.ResponseWriter, object interface{}) {
 	status := http.StatusOK
 	jsonResp, err := json.Marshal(object)
 	if err != nil {
-		log.Errorf("Failed to marshal message string in WithObject: %s", err.Error())
+		logger.Errf("Failed to marshal message string in WithObject: %s", err.Error())
 		jsonResp = internalServerErrorResp
 		status = http.StatusInternalServerError
 	}

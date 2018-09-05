@@ -3,12 +3,12 @@ package router
 import (
 	"context"
 	"encoding/json"
+	"github.com/kumparan/go-lib/logger"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/kumparan/go-lib/log"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -117,37 +117,37 @@ func sanitizeStatusCode(status int) string {
 
 // Get function
 func (rtr Router) Get(pattern string, h http.HandlerFunc) {
-	log.Debugf("[router][get] %s", pattern)
+	logger.Debugf("[router][get] %s", pattern)
 	rtr.r.HandleFunc(pattern, prometheus.InstrumentHandlerFunc(pattern, rtr.timeout(h))).Methods("GET")
 }
 
 // Post function
 func (rtr Router) Post(pattern string, h http.HandlerFunc) {
-	log.Debugf("[router][post] %s", pattern)
+	logger.Debugf("[router][post] %s", pattern)
 	rtr.r.HandleFunc(pattern, prometheus.InstrumentHandlerFunc(pattern, rtr.timeout(h))).Methods("POST")
 }
 
 // Put function
 func (rtr Router) Put(pattern string, h http.HandlerFunc) {
-	log.Debugf("[router][put] %s", pattern)
+	logger.Debugf("[router][put] %s", pattern)
 	rtr.r.HandleFunc(pattern, prometheus.InstrumentHandlerFunc(pattern, rtr.timeout(h))).Methods("PUT")
 }
 
 // Delete function
 func (rtr Router) Delete(pattern string, h http.HandlerFunc) {
-	log.Debugf("[router][delete] %s", pattern)
+	logger.Debugf("[router][delete] %s", pattern)
 	rtr.r.HandleFunc(pattern, prometheus.InstrumentHandlerFunc(pattern, rtr.timeout(h))).Methods("DELETE")
 }
 
 // Patch function
 func (rtr Router) Patch(pattern string, h http.HandlerFunc) {
-	log.Debugf("[router][patch] %s", pattern)
+	logger.Debugf("[router][patch] %s", pattern)
 	rtr.r.HandleFunc(pattern, prometheus.InstrumentHandlerFunc(pattern, rtr.timeout(h))).Methods("PATCH")
 }
 
 // Handle function
 func (rtr Router) Handle(pattern string, h http.Handler) {
-	log.Debugf("[router][handle] %s", pattern)
+	logger.Debugf("[router][handle] %s", pattern)
 	rtr.r.Handle(pattern, h)
 }
 

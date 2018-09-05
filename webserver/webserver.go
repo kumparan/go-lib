@@ -2,13 +2,13 @@ package webserver
 
 import (
 	"encoding/json"
+	"github.com/kumparan/go-lib/logger"
 	"net/http"
 	_ "net/http/pprof"
 	"strconv"
 	"time"
 
 	"github.com/kumparan/go-lib/env"
-	"github.com/kumparan/go-lib/log"
 	"github.com/kumparan/go-lib/router"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -87,6 +87,6 @@ func (w *WebServer) Router() *router.Router {
 }
 
 func (w *WebServer) Run() error {
-	log.Infof("Webserver serving on: %s", w.port)
+	logger.Infof("Webserver serving on: %s", w.port)
 	return http.ListenAndServe(w.port, w.router)
 }

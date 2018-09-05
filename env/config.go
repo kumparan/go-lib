@@ -2,12 +2,12 @@ package env
 
 import (
 	"fmt"
+	"github.com/kumparan/go-lib/logger"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 
-	"github.com/kumparan/go-lib/log"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -46,7 +46,7 @@ func LoadYamlConfig(result interface{}, filename string) error {
 		dirEnv = string(DevelopmentEnv)
 	}
 	confDir := path.Join(cfg.Dir, dirEnv, filename)
-	log.Debugf("[config][yaml] from: %s", confDir)
+	logger.Debugf("[config][yaml] from: %s", confDir)
 	content, err := ioutil.ReadFile(confDir)
 	if err != nil {
 		return err
