@@ -12,6 +12,7 @@ func StandardizeSpaces(s string) string {
 	return strings.Join(strings.Fields(s), " ")
 }
 
+// DEPRECATED never use this no more
 // GenerateSlug  -> Replace space with dash, lower it, and trim the space
 func GenerateSlug(inputStr string) string {
 	re := regexp.MustCompile("[$#<|>{}~%`\\[\\]'^]")

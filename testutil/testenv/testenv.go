@@ -2,7 +2,6 @@ package testenv
 
 import (
 	"github.com/kelseyhightower/envconfig"
-	"github.com/lab46/example/pkg/log"
 )
 
 // EnvConfig to store testing environment configuration
