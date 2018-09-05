@@ -2,7 +2,6 @@ package env
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/kumparan/go-lib/logger"
 	"os"
@@ -109,7 +108,8 @@ func GetGoVersion() string {
 func LoadEnv(envName string) (err error) {
 	envFile, envExist := os.LookupEnv(envName)
 	if envExist {
-		fmt.Printf("Loading environment from %s\n", envFile)
+		logger.Infof("Loading environment from %s", envFile)
 		err = godotenv.Load(envFile)
 	}
+	return
 }
