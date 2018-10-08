@@ -1,6 +1,9 @@
 package utils
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 // ContainsInt64 tells whether a slice contains x.
 func ContainsInt64(a []int64, x int64) bool {
@@ -127,4 +130,9 @@ func UniqInt64(elements []int64) []int64 {
 		result = append(result, key)
 	}
 	return result
+}
+
+// Dump :nodoc:
+func Dump(i interface{}) string {
+	return fmt.Sprintf("%+v", i)
 }
