@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -135,4 +136,10 @@ func UniqInt64(elements []int64) []int64 {
 // Dump :nodoc:
 func Dump(i interface{}) string {
 	return fmt.Sprintf("%+v", i)
+}
+
+// ToByte :nodoc:
+func ToByte(i interface{}) []byte {
+	bt, _ := json.Marshal(i)
+	return bt
 }
