@@ -2,8 +2,6 @@ package redcachekeeper
 
 import (
 	"time"
-
-	"github.com/go-redsync/redsync"
 )
 
 type (
@@ -12,14 +10,12 @@ type (
 		GetTTLFloat64() float64
 		GetKey() string
 		GetValue() interface{}
-		GetMutex() *redsync.Mutex
 	}
 
 	item struct {
 		key   string
 		value interface{}
 		ttl   time.Duration
-		mutex *redsync.Mutex
 	}
 )
 
@@ -53,9 +49,4 @@ func (i *item) GetKey() string {
 // GetValue :nodoc:
 func (i *item) GetValue() interface{} {
 	return i.value
-}
-
-// GetMutex :nodoc:
-func (i *item) GetMutex() *redsync.Mutex {
-	return i.mutex
 }

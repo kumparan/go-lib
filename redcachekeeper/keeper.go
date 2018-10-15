@@ -111,6 +111,10 @@ func (k *keeper) Store(mutex *redsync.Mutex, c Item) error {
 
 // Purge :nodoc:
 func (k *keeper) Purge(matchString string) error {
+	if k.disableCaching {
+		return nil
+	}
+
 	client := k.connPool.Get()
 	defer client.Close()
 
