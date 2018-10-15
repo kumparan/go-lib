@@ -32,3 +32,12 @@ func Int642String(i int64) string {
 	s := strconv.FormatInt(i, 10)
 	return s
 }
+
+// Offset to get offset from page and limit, min value for page = 1
+func Offset(page, limit int64) int64 {
+	offset := (page - 1) * limit
+	if offset < 0 {
+		return 0
+	}
+	return offset
+}
