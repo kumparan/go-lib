@@ -2,7 +2,9 @@ package utils
 
 import (
 	"errors"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 // DEPRECATED never use this no more
@@ -40,4 +42,9 @@ func Offset(page, limit int64) int64 {
 		return 0
 	}
 	return offset
+}
+
+// Generate ID based on current time
+func GenerateID() int64 {
+	return int64(time.Now().UnixNano()) + int64(rand.Intn(10000))
 }
