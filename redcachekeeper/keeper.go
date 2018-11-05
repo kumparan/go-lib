@@ -24,6 +24,7 @@ type (
 		Store(*redsync.Mutex, Item) error
 		Purge(string) error
 
+		AcquireLock(string) (*redsync.Mutex, error)
 		SetDefaultTTL(time.Duration)
 		SetConnectionPool(*redigo.Pool)
 		SetLockConnectionPool(*redigo.Pool)
@@ -67,7 +68,7 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 		return
 	}
 
-	mutex, err = k.acquireLock(key)
+	mutex, err = k.AcquireLock(key)
 	if err == nil {
 		return
 	}
@@ -171,21 +172,22 @@ func (k *keeper) SetDisableCaching(b bool) {
 	k.disableCaching = b
 }
 
-func (k *keeper) decideCacheTTL(c Item) float64 {
-	if c.GetTTLFloat64() > 0 {
-		return c.GetTTLFloat64()
-	}
-
-	return k.defaultTTL.Seconds()
-}
-
-func (k *keeper) acquireLock(key string) (*redsync.Mutex, error) {
+// AcquireLock :nodoc:
+func (k *keeper) AcquireLock(key string) (*redsync.Mutex, error) {
 	r := redsync.New([]redsync.Pool{k.lockConnPool})
 	m := r.NewMutex("lock:"+key,
 		redsync.SetExpiry(k.lockDuration),
 		redsync.SetTries(k.lockTries))
 
 	return m, m.Lock()
+}
+
+func (k *keeper) decideCacheTTL(c Item) float64 {
+	if c.GetTTLFloat64() > 0 {
+		return c.GetTTLFloat64()
+	}
+
+	return k.defaultTTL.Seconds()
 }
 
 func (k *keeper) getCachedItem(key string) (value interface{}, err error) {
