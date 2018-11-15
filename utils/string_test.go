@@ -42,3 +42,9 @@ func TestString2Int64WithDefault(t *testing.T) {
 	assert.Equal(t, int64(20), String2Int64WithDefault("20", 0))
 	assert.Equal(t, int64(999), String2Int64WithDefault("20abc", 999))
 }
+
+func TestGetIDFromSlug(t *testing.T) {
+	assert.Equal(t, int64(10), GetIDFromSlug("apakah-10"))
+	assert.Equal(t, int64(20), GetIDFromSlug("koji-20"))
+	assert.Equal(t, int64(0), GetIDFromSlug("keren-20abc"))
+}

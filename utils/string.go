@@ -55,3 +55,14 @@ func String2Int64WithDefault(s string, d int64) int64 {
 	}
 	return i
 }
+
+// GetIDFromSlug :nodoc:
+func GetIDFromSlug(s string) int64 {
+	ss := strings.Split(s, "-")
+	id, err := strconv.ParseInt(ss[len(ss)-1], 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return id
+}
