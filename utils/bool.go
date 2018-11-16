@@ -22,8 +22,8 @@ func IsNumeric(s string) bool {
 	return true
 }
 
-// DEPRECATED never use this no more
 // Bool2String :nodoc:
+// DEPRECATED never use this no more
 func Bool2String(b bool) string {
 	return strconv.FormatBool(b)
 }

@@ -110,7 +110,7 @@ func UniqString(elements []string) []string {
 
 	// Place all keys from the map into a slice.
 	result := []string{}
-	for key, _ := range encountered {
+	for key := range encountered {
 		result = append(result, key)
 	}
 	return result
@@ -127,7 +127,7 @@ func UniqInt64(elements []int64) []int64 {
 
 	// Place all keys from the map into a slice.
 	result := []int64{}
-	for key, _ := range encountered {
+	for key := range encountered {
 		result = append(result, key)
 	}
 	return result
