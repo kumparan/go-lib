@@ -48,3 +48,12 @@ func (n *NATS) Publish(subject string, v interface{}) error {
 
 	return n.conn.Publish(subject, utils.ToByte(v))
 }
+
+// QueueSubscribe :nodoc:
+func (n *NATS) QueueSubscribe(subject, qgroup string, cb stan.MsgHandler, opts ...stan.SubscriptionOption) (stan.Subscription, error) {
+	if n.testing {
+		return nil, nil
+	}
+
+	return n.conn.QueueSubscribe(subject, qgroup, cb, opts...)
+}
