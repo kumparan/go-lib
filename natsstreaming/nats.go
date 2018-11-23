@@ -6,6 +6,8 @@ import (
 )
 
 type (
+	EventType string
+
 	NATS struct {
 		conn    stan.Conn
 		testing bool
@@ -13,10 +15,11 @@ type (
 
 	// NatsMessage :nodoc:
 	NatsMessage struct {
-		ID     int64  `json:"id"`
-		UserID int64  `json:"user_id"`
-		Body   string `json:"body,omitempty"`
-		Time   string `json:"time"`
+		ID     int64     `json:"id"`
+		UserID int64     `json:"user_id"`
+		Type   EventType `json:"type"`
+		Body   string    `json:"body,omitempty"`
+		Time   string    `json:"time"`
 	}
 )
 
