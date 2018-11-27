@@ -2,7 +2,8 @@ package utils
 
 import (
 	"fmt"
-	"github.com/graph-gophers/graphql-go"
+
+	graphql "github.com/graph-gophers/graphql-go"
 )
 
 // Int642GraphQLID :nodoc:
