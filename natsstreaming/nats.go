@@ -1,6 +1,11 @@
 package natsstreaming
 
 import (
+	"time"
+
+	"github.com/jpillora/backoff"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/kumparan/go-lib/utils"
 	"github.com/nats-io/go-nats-streaming"
 )
@@ -32,6 +37,49 @@ func NewNATS(clusterID, clientID, url string, options ...stan.Option) (*NATS, er
 	}
 
 	return &NATS{conn: nc}, nil
+}
+
+// NatsCallback :nodoc:
+type NatsCallback func(conn stan.Conn)
+
+// NewNATSWithCallback IMPORTANT! Not to send any stan.NatsURL or stan.SetConnectionLostHandler as options
+func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, options ...stan.Option) {
+	c := make(chan int)
+	options = append(options, stan.NatsURL(url))
+	options = append(options, stan.SetConnectionLostHandler(func(conn stan.Conn, reason error) {
+		log.Info("Nats connection lost!")
+
+		conn.Close()
+		c <- 1
+	}))
+	var nc stan.Conn
+	var err error
+
+	retryCount := 1
+	backoffer := &backoff.Backoff{
+		Min:    200 * time.Millisecond,
+		Max:    1 * time.Second,
+		Jitter: true,
+	}
+
+	for {
+		nc, err = stan.Connect(clusterID, clientID, options...)
+		if err != nil {
+			log.Info("Connect failed count: ", retryCount)
+			retryCount++
+
+			time.Sleep(backoffer.Duration())
+			continue
+		}
+
+		log.Info("Nats connection made...")
+		retryCount = 1
+
+		// Run callback function
+		fn(nc)
+
+		<-c
+	}
 }
 
 // NewTestNATS :nodoc:
