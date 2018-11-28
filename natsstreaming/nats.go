@@ -24,8 +24,8 @@ type (
 )
 
 // NewNATS :nodoc:
-func NewNATS(clusterID, clientID, url string) (*NATS, error) {
-	nc, err := stan.Connect(clusterID, clientID, stan.NatsURL(url))
+func NewNATS(clusterID, clientID, url string, options ...stan.Option) (*NATS, error) {
+	nc, err := stan.Connect(clusterID, clientID, stan.NatsURL(url), options...)
 	if err != nil {
 		return nil, err
 	}
