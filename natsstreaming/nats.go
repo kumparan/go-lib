@@ -11,8 +11,14 @@ import (
 )
 
 type (
+
+	// EventType :nodoc:
 	EventType string
 
+	// NatsCallback :nodoc:
+	NatsCallback func(conn stan.Conn)
+
+	// NATS :nodoc:
 	NATS struct {
 		conn    stan.Conn
 		testing bool
@@ -38,9 +44,6 @@ func NewNATS(clusterID, clientID, url string, options ...stan.Option) (*NATS, er
 
 	return &NATS{conn: nc}, nil
 }
-
-// NatsCallback :nodoc:
-type NatsCallback func(conn stan.Conn)
 
 // NewNATSWithCallback IMPORTANT! Not to send any stan.NatsURL or stan.SetConnectionLostHandler as options
 func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, options ...stan.Option) {
@@ -85,6 +88,11 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 // NewTestNATS :nodoc:
 func NewTestNATS() *NATS {
 	return &NATS{testing: true}
+}
+
+// SetConn :nodoc:
+func (n *NATS) SetConn(conn stan.Conn) {
+	n.conn = conn
 }
 
 // Close NatsConnection :nodoc:
