@@ -66,3 +66,35 @@ func GetIDFromSlug(s string) int64 {
 
 	return id
 }
+
+// StringPointer2String :nodoc:
+func StringPointer2String(s *string) string {
+	if s != nil {
+		return *s
+	}
+	return ""
+}
+
+// StringPointer2Float64 :nodoc:
+func StringPointer2Float64(s *string) float64 {
+	if s != nil {
+		f, err := strconv.ParseFloat(*s, 64)
+		if err != nil {
+			return float64(0)
+		}
+		return f
+	}
+	return float64(0)
+}
+
+// StringPointer2Int64 :nodoc:
+func StringPointer2Int64(s *string) int64 {
+	if s != nil {
+		i, err := strconv.ParseInt(*s, 10, 64)
+		if err != nil {
+			return int64(0)
+		}
+		return i
+	}
+	return int64(0)
+}
