@@ -2,24 +2,17 @@ package utils
 
 import (
 	"time"
-
-	"github.com/jpillora/backoff"
 )
 
-type stop struct {
+// RetryStopper :nodoc:
+type RetryStopper struct {
 	error
-}
-
-var backoffer = &backoff.Backoff{
-	Min:    200 * time.Millisecond,
-	Max:    1 * time.Second,
-	Jitter: true,
 }
 
 // Retry :nodoc:
 func Retry(attempts int, sleep time.Duration, fn func() error) error {
 	if err := fn(); err != nil {
-		if s, ok := err.(stop); ok {
+		if s, ok := err.(RetryStopper); ok {
 			// Return the original error for later checking
 			return s.error
 		}
