@@ -48,3 +48,33 @@ func TestGetIDFromSlug(t *testing.T) {
 	assert.Equal(t, int64(20), GetIDFromSlug("koji-20"))
 	assert.Equal(t, int64(0), GetIDFromSlug("keren-20abc"))
 }
+
+func TestStringPointer2String(t *testing.T) {
+	var s *string
+	assert.Equal(t, "", StringPointer2String(s))
+	ss := "bengbeng"
+	s = &ss
+	assert.Equal(t, "bengbeng", StringPointer2String(s))
+	*s = ""
+	assert.Equal(t, "", StringPointer2String(s))
+}
+
+func TestStringPointer2Float64(t *testing.T) {
+	var s *string
+	assert.Equal(t, float64(0), StringPointer2Float64(s))
+	ss := "12.22"
+	s = &ss
+	assert.Equal(t, float64(12.22), StringPointer2Float64(s))
+	*s = ""
+	assert.Equal(t, float64(0), StringPointer2Float64(s))
+}
+
+func TestStringPointer2Int64(t *testing.T) {
+	var s *string
+	assert.Equal(t, int64(0), StringPointer2Int64(s))
+	ss := "12"
+	s = &ss
+	assert.Equal(t, int64(12), StringPointer2Int64(s))
+	*s = ""
+	assert.Equal(t, int64(0), StringPointer2Int64(s))
+}

@@ -22,3 +22,13 @@ func TestBool2String(t *testing.T) {
 	assert.Equal(t, strconv.FormatBool(false), Bool2String(false))
 	assert.Equal(t, strconv.FormatBool(true), Bool2String(true))
 }
+
+func TestBoolPointerToBool(t *testing.T) {
+	var b *bool
+	assert.Equal(t, false, BoolPointerToBool(b))
+	bb := false
+	b = &bb
+	assert.Equal(t, bb, BoolPointerToBool(b))
+	*b = true
+	assert.Equal(t, true, BoolPointerToBool(b))
+}

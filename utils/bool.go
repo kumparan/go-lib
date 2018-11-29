@@ -27,3 +27,11 @@ func IsNumeric(s string) bool {
 func Bool2String(b bool) string {
 	return strconv.FormatBool(b)
 }
+
+// BoolPointerToBool :nodoc:
+func BoolPointerToBool(b *bool) bool {
+	if b != nil {
+		return *b
+	}
+	return false
+}

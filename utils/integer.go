@@ -48,3 +48,11 @@ func Offset(page, limit int64) int64 {
 func GenerateID() int64 {
 	return int64(time.Now().UnixNano()) + int64(rand.Intn(10000))
 }
+
+// Int32PointerToInt64 :nodoc:
+func Int32PointerToInt64(i *int32) int64 {
+	if i != nil {
+		return int64(*i)
+	}
+	return int64(0)
+}
