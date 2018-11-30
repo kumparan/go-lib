@@ -56,3 +56,11 @@ func Int32PointerToInt64(i *int32) int64 {
 	}
 	return int64(0)
 }
+
+// Int32PointerToInt32 :nodoc:
+func Int32PointerToInt32(i *int32) int32 {
+	if i != nil {
+		return *i
+	}
+	return 0
+}
