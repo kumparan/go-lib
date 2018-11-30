@@ -65,7 +65,7 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	c := make(chan int)
 	options = append(options, stan.NatsURL(url))
 	options = append(options, stan.SetConnectionLostHandler(func(conn stan.Conn, reason error) {
-		log.Info("Nats connection lost!")
+		log.Error("Nats connection lost!")
 
 		conn.Close()
 		c <- 1
@@ -83,7 +83,7 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	for {
 		nc, err = stan.Connect(clusterID, clientID, options...)
 		if err != nil {
-			log.Info("Connect failed count: ", retryAttempts)
+			log.Error("Connect failed count: ", retryAttempts)
 			retryAttempts++
 
 			time.Sleep(backoffer.Duration())
