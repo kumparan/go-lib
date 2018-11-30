@@ -125,6 +125,22 @@ func (n *NATS) SetPublishRetryInterval(d time.Duration) {
 	n.publishRetryInterval = d
 }
 
+// GetPublishRetryAttempts :nodoc:
+func (n *NATS) GetPublishRetryAttempts() int {
+	if n.publishRetryAttempts <= 0 {
+		return defaultPublishRetryAttempts
+	}
+	return n.publishRetryAttempts
+}
+
+// GetPublishRetryInterval :nodoc:
+func (n *NATS) GetPublishRetryInterval() time.Duration {
+	if n.publishRetryInterval <= 1*time.Millisecond {
+		return defaultPublishRetryInterval
+	}
+	return n.publishRetryInterval
+}
+
 // Close NatsConnection :nodoc:
 func (n *NATS) Close() {
 	n.conn.Close()
@@ -136,7 +152,7 @@ func (n *NATS) Publish(subject string, v interface{}) error {
 		return nil
 	}
 
-	giveUpErr := utils.Retry(n.publishRetryAttempts, n.publishRetryInterval, func() error {
+	giveUpErr := utils.Retry(n.GetPublishRetryAttempts(), n.GetPublishRetryInterval(), func() error {
 		err := n.conn.Publish(subject, utils.ToByte(v))
 		if err != nil {
 			client := n.redisConn.Get()
