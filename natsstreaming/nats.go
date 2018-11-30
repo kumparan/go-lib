@@ -3,6 +3,7 @@ package natsstreaming
 import (
 	"time"
 
+	redigo "github.com/gomodule/redigo/redis"
 	"github.com/jpillora/backoff"
 	log "github.com/sirupsen/logrus"
 
@@ -11,7 +12,6 @@ import (
 )
 
 type (
-
 	// EventType :nodoc:
 	EventType string
 
@@ -20,8 +20,12 @@ type (
 
 	// NATS :nodoc:
 	NATS struct {
-		conn    stan.Conn
-		testing bool
+		conn      stan.Conn
+		redisConn *redigo.Pool
+		testing   bool
+
+		publishRetryAttempts int
+		publishRetryInterval time.Duration
 	}
 
 	// NatsMessage :nodoc:
@@ -32,6 +36,17 @@ type (
 		Body   string    `json:"body,omitempty"`
 		Time   string    `json:"time"`
 	}
+
+	NatsMessageWithSubject struct {
+		Subject string      `json:"subject"`
+		Message interface{} `json:"message"`
+	}
+)
+
+const (
+	failedMessagesRedisKey      = "nats:failed-messages"
+	defaultPublishRetryAttempts = 5
+	defaultPublishRetryInterval = 100 * time.Millisecond
 )
 
 // NewNATS :nodoc:
@@ -42,7 +57,7 @@ func NewNATS(clusterID, clientID, url string, options ...stan.Option) (*NATS, er
 		return nil, err
 	}
 
-	return &NATS{conn: nc}, nil
+	return &NATS{conn: nc, publishRetryAttempts: defaultPublishRetryAttempts, publishRetryInterval: defaultPublishRetryInterval}, nil
 }
 
 // NewNATSWithCallback IMPORTANT! Not to send any stan.NatsURL or stan.SetConnectionLostHandler as options
@@ -58,7 +73,7 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	var nc stan.Conn
 	var err error
 
-	retryCount := 1
+	retryAttempts := 1
 	backoffer := &backoff.Backoff{
 		Min:    200 * time.Millisecond,
 		Max:    1 * time.Second,
@@ -68,15 +83,15 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	for {
 		nc, err = stan.Connect(clusterID, clientID, options...)
 		if err != nil {
-			log.Info("Connect failed count: ", retryCount)
-			retryCount++
+			log.Info("Connect failed count: ", retryAttempts)
+			retryAttempts++
 
 			time.Sleep(backoffer.Duration())
 			continue
 		}
 
 		log.Info("Nats connection made...")
-		retryCount = 1
+		retryAttempts = 1
 
 		// Run callback function
 		fn(nc)
@@ -95,6 +110,21 @@ func (n *NATS) SetConn(conn stan.Conn) {
 	n.conn = conn
 }
 
+// SetRedisConn :nodoc:
+func (n *NATS) SetRedisConn(conn *redigo.Pool) {
+	n.redisConn = conn
+}
+
+// SetPublishRetryAttempts :nodoc:
+func (n *NATS) SetPublishRetryAttempts(i int) {
+	n.publishRetryAttempts = i
+}
+
+// SetPublishRetryInterval :nodoc:
+func (n *NATS) SetPublishRetryInterval(d time.Duration) {
+	n.publishRetryInterval = d
+}
+
 // Close NatsConnection :nodoc:
 func (n *NATS) Close() {
 	n.conn.Close()
@@ -106,7 +136,25 @@ func (n *NATS) Publish(subject string, v interface{}) error {
 		return nil
 	}
 
-	return n.conn.Publish(subject, utils.ToByte(v))
+	giveUpErr := utils.Retry(n.publishRetryAttempts, n.publishRetryInterval, func() error {
+		err := n.conn.Publish(subject, utils.ToByte(v))
+		if err != nil {
+			client := n.redisConn.Get()
+			defer client.Close()
+
+			client.Do("RPUSH", failedMessagesRedisKey, utils.ToByte(NatsMessageWithSubject{
+				Subject: subject,
+				Message: v,
+			}))
+		}
+
+		return err
+	})
+	if giveUpErr != nil {
+		log.WithField("type", "give up").Error(giveUpErr)
+	}
+
+	return nil
 }
 
 // QueueSubscribe :nodoc:
