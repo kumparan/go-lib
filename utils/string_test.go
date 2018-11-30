@@ -78,3 +78,18 @@ func TestStringPointer2Int64(t *testing.T) {
 	*s = ""
 	assert.Equal(t, int64(0), StringPointer2Int64(s))
 }
+
+func TestArrayStringPointer2ArrayInt64(t *testing.T) {
+	var ps1,ps2 *string
+	s1 := "123"
+	s2 := "321"
+	ps1 = &s1
+	ps2 = &s2
+
+	s := &[]*string{ps1,ps2}
+	as :=  ArrayStringPointer2ArrayInt64(s)
+
+	assert.Contains(t, as, int64(123))
+	assert.Contains(t, as, int64(321))
+
+}

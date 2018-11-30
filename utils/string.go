@@ -98,3 +98,15 @@ func StringPointer2Int64(s *string) int64 {
 	}
 	return int64(0)
 }
+
+// ArrayStringPointer2ArrayInt64 :nodoc:
+func ArrayStringPointer2ArrayInt64(s *[]*string) []int64 {
+	var i []int64
+	if s != nil {
+		for _, val := range *s {
+			i = append(i, StringPointer2Int64(val))
+		}
+		return i
+	}
+	return nil
+}
