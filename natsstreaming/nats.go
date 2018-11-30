@@ -47,6 +47,7 @@ const (
 	failedMessagesRedisKey      = "nats:failed-messages"
 	defaultPublishRetryAttempts = 5
 	defaultPublishRetryInterval = 100 * time.Millisecond
+	defaultConnectRetryAttempts = 50
 )
 
 // NewNATS :nodoc:
@@ -65,7 +66,7 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	c := make(chan int)
 	options = append(options, stan.NatsURL(url))
 	options = append(options, stan.SetConnectionLostHandler(func(conn stan.Conn, reason error) {
-		log.Error("Nats connection lost!")
+		log.Errorf("Nats connection lost! Reason: %v", reason)
 
 		conn.Close()
 		c <- 1
@@ -81,16 +82,30 @@ func NewNATSWithCallback(clusterID, clientID, url string, fn NatsCallback, optio
 	}
 
 	for {
+		if retryAttempts >= defaultConnectRetryAttempts {
+			log.WithFields(log.Fields{
+				"clusterID": clusterID,
+				"clientID":  clientID,
+			}).Fatalf("Connect failed count reaches limit of %d. Shutting down the server...", defaultConnectRetryAttempts)
+		}
+
 		nc, err = stan.Connect(clusterID, clientID, options...)
 		if err != nil {
-			log.Error("Connect failed count: ", retryAttempts)
+			log.WithFields(log.Fields{
+				"clusterID":     clusterID,
+				"clientID":      clientID,
+				"retryAttempts": retryAttempts,
+			}).Error(err)
 			retryAttempts++
 
 			time.Sleep(backoffer.Duration())
 			continue
 		}
 
-		log.Info("Nats connection made...")
+		log.WithFields(log.Fields{
+			"clusterID": clusterID,
+			"clientID":  clientID,
+		}).Info("Nats connection made...")
 		retryAttempts = 1
 
 		// Run callback function
