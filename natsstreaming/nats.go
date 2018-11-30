@@ -130,7 +130,7 @@ func (n *NATS) GetPublishRetryAttempts() int {
 	if n.publishRetryAttempts <= 0 {
 		return defaultPublishRetryAttempts
 	}
-	n.publishRetryAttempts
+	return n.publishRetryAttempts
 }
 
 // GetPublishRetryInterval :nodoc:
@@ -138,7 +138,7 @@ func (n *NATS) GetPublishRetryInterval() time.Duration {
 	if n.publishRetryInterval <= 1*time.Millisecond {
 		return defaultPublishRetryInterval
 	}
-	n.publishRetryInterval
+	return n.publishRetryInterval
 }
 
 // Close NatsConnection :nodoc:
