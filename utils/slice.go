@@ -130,3 +130,15 @@ func UniqInt64(elements []int64) []int64 {
 	}
 	return result
 }
+
+// SlicePointerInt32PointerToSliceInt64 :nodoc:
+func SlicePointerInt32PointerToSliceInt64(i *[]*int32) (result []int64) {
+	if i != nil {
+		dump := *i
+		for _, element := range dump {
+			result = append(result, int64(*element))
+		}
+		return result
+	}
+	return result
+}

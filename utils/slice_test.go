@@ -66,3 +66,9 @@ func TestUniqInt64(t *testing.T) {
 
 	assert.Equal(t, []int64{1, 2, 4}, UniqInt64(s))
 }
+
+func TestSlicePointerInt32PointerToSliceInt64(t *testing.T) {
+	var i *[]*int32
+	var j []int64
+	assert.Equal(t, j, SlicePointerInt32PointerToSliceInt64(i))
+}
