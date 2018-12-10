@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	redigo "github.com/gomodule/redigo/redis"
 )
 

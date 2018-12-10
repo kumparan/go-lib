@@ -42,10 +42,6 @@
   version = "1.7.0"
 
 [[constraint]]
-  name = "github.com/garyburd/redigo"
-  version = "1.6.0"
-
-[[constraint]]
   name = "github.com/gin-gonic/gin"
   version = "1.3.0"
 
