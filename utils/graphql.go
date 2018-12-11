@@ -23,7 +23,7 @@ func GraphQLIDPointer2String(id *graphql.ID) string {
 		return ""
 	}
 
-	return fmt.Sprintf("%s", id)
+	return fmt.Sprintf("%s", *id)
 }
 
 // GraphQLID2Int64 :nodoc:
@@ -41,7 +41,7 @@ func GraphQLIDPointer2Int64(id *graphql.ID) int64 {
 		return int64(0)
 	}
 
-	newID, err := strconv.Atoi(fmt.Sprintf("%s", id))
+	newID, err := strconv.Atoi(fmt.Sprintf("%s", *id))
 	if err != nil {
 		return int64(0)
 	}
@@ -63,7 +63,7 @@ func GraphQLIDPointer2Int32(id *graphql.ID) int32 {
 		return int32(0)
 	}
 
-	newID, err := strconv.Atoi(fmt.Sprintf("%s", id))
+	newID, err := strconv.Atoi(fmt.Sprintf("%s", *id))
 	if err != nil {
 		return int32(0)
 	}
