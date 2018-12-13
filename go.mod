@@ -50,7 +50,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/sirupsen/logrus v1.2.0
 	github.com/stretchr/testify v1.2.2
-	github.com/ugorji/go/codec v0.0.0-20181209151446-772ced7fd4c2 // indirect
+	github.com/ugorji/go v1.1.1 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20181212084658-d1ab6d058001 // indirect
 	google.golang.org/appengine v1.3.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
