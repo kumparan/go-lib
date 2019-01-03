@@ -196,3 +196,11 @@ func (n *NATS) QueueSubscribe(subject, qgroup string, cb stan.MsgHandler, opts .
 
 	return n.conn.QueueSubscribe(subject, qgroup, cb, opts...)
 }
+
+// Subscribe :nodoc:
+func (n *NATS) Subscribe(subject string, cb stan.MsgHandler, opts ...stan.SubscriptionOption) (stan.Subscription, error) {
+	if n.testing {
+		return nil, nil
+	}
+	return n.conn.Subscribe(subject, cb, opts...)
+}
