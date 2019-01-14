@@ -1,3 +1,4 @@
 # IDE
 .vscode
+.idea
 vendor
