@@ -12,8 +12,8 @@ func DumpOutGoingContext(c context.Context) string {
 	return Dump(md)
 }
 
-// DumpOutIncomingContext :nodoc:
-func DumpOutIncomingContext(c context.Context) string {
+// DumpIncomingContext :nodoc:
+func DumpIncomingContext(c context.Context) string {
 	md, _ := metadata.FromIncomingContext(c)
 	return Dump(md)
 }
