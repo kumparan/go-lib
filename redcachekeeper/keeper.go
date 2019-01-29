@@ -80,9 +80,13 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 			Max:    200 * time.Millisecond,
 			Jitter: true,
 		}
-		cachedItem, err = k.getCachedItem(key)
-		if err != nil && err != redigo.ErrNil || cachedItem != nil {
-			return
+
+		if !k.isLocked(key) {
+			cachedItem, err = k.getCachedItem(key)
+			if err != nil && err != redigo.ErrNil || cachedItem != nil {
+				return
+			}
+			return nil, nil, nil
 		}
 
 		elapsed := time.Since(start)
@@ -93,7 +97,7 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 		time.Sleep(b.Duration())
 	}
 
-	return nil, nil, errors.New("Wait Too Long")
+	return nil, nil, errors.New("wait too long")
 }
 
 // Store :nodoc:
@@ -195,4 +199,16 @@ func (k *keeper) getCachedItem(key string) (value interface{}, err error) {
 	defer client.Close()
 
 	return client.Do("GET", key)
+}
+
+func (k *keeper) isLocked(key string) bool {
+	client := k.connPool.Get()
+	defer client.Close()
+
+	reply, err := client.Do("GET", "lock:"+key)
+	if err != nil || reply == nil {
+		return false
+	}
+
+	return true
 }
