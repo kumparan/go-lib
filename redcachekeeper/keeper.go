@@ -202,7 +202,7 @@ func (k *keeper) getCachedItem(key string) (value interface{}, err error) {
 }
 
 func (k *keeper) isLocked(key string) bool {
-	client := k.connPool.Get()
+	client := k.lockConnPool.Get()
 	defer client.Close()
 
 	reply, err := client.Do("GET", "lock:"+key)
