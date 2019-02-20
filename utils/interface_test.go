@@ -1,13 +1,15 @@
 package utils
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInterfaceToInt64(t *testing.T) {
+func TestInterfaceBytesToInt64(t *testing.T) {
 	someInteger := 8
-	result := InterfaceToInt64(interface{}(someInteger))
+	bt, _ := json.Marshal(someInteger)
+	result := InterfaceBytesToInt64(interface{}(bt))
 	assert.EqualValues(t, someInteger, result)
 }
