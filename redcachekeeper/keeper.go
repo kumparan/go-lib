@@ -23,6 +23,7 @@ type (
 		GetOrLock(string) (interface{}, *redsync.Mutex, error)
 		Store(*redsync.Mutex, Item) error
 		Purge(string) error
+		IncreaseCachedValueByOne(key string) error
 
 		AcquireLock(string) (*redsync.Mutex, error)
 		SetDefaultTTL(time.Duration)
@@ -138,6 +139,20 @@ func (k *keeper) Purge(matchString string) error {
 	}
 	_, err = client.Do("EXEC")
 
+	return err
+}
+
+// IncreaseCachedValueByOne will increments the number stored at key by one.
+// If the key does not exist, it is set to 0 before performing the operation
+func (k *keeper) IncreaseCachedValueByOne(key string) error {
+	if k.disableCaching {
+		return nil
+	}
+
+	client := k.connPool.Get()
+	defer client.Close()
+
+	_, err := client.Do("INCR", key)
 	return err
 }
 
