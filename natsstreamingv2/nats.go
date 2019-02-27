@@ -1,4 +1,4 @@
-package natsstreaming
+package natsstreamingv2
 
 import (
 	"encoding/json"
