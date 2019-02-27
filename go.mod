@@ -24,6 +24,7 @@ require (
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
 	github.com/hashicorp/raft v1.0.0 // indirect
+	github.com/jasonlvhit/gocron v0.0.0-20190121134850-6771d4b492ba
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7
