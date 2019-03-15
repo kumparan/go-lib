@@ -18,9 +18,12 @@ const (
 )
 
 type (
+	CacheGeneratorFn func() (interface{}, error)
+
 	// Keeper responsible for managing cache
 	Keeper interface {
 		GetOrLock(string) (interface{}, *redsync.Mutex, error)
+		GetOrSet(string, CacheGeneratorFn, time.Duration) (interface{}, error)
 		Store(*redsync.Mutex, Item) error
 		Purge(string) error
 		IncreaseCachedValueByOne(key string) error
@@ -99,6 +102,33 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 	}
 
 	return nil, nil, errors.New("wait too long")
+}
+
+// GetOrSet :nodoc:
+func (k *keeper) GetOrSet(key string, fn CacheGeneratorFn, ttl time.Duration) (cachedItem interface{}, err error) {
+	cachedItem, mu, err := k.GetOrLock(key)
+	if err != nil {
+		return
+	}
+	if cachedItem != nil {
+		return
+	}
+
+	defer func() {
+		if mu != nil {
+			mu.Unlock()
+		}
+	}()
+
+	cachedItem, err = fn()
+
+	if err != nil {
+		return
+	}
+
+	err = k.Store(mu, NewItemWithCustomTTL(key, cachedItem, ttl))
+
+	return
 }
 
 // Store :nodoc:

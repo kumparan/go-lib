@@ -67,6 +67,45 @@ func TestGetLockStore(t *testing.T) {
 	assert.NoError(t, err2)
 }
 
+func TestGetOrSet(t *testing.T) {
+	// Initialize new cache keeper
+	k := NewKeeper()
+
+	m, err := miniredis.Run()
+	assert.NoError(t, err)
+
+	r := newRedisConn(m.Addr())
+	k.SetConnectionPool(r)
+	k.SetLockConnectionPool(r)
+
+	val := "hey this is the result"
+
+	t.Run("No cache", func(t *testing.T) {
+		testKey := "just-a-key"
+		assert.False(t, m.Exists(testKey))
+
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return val, nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+	})
+
+	t.Run("Already cached", func(t *testing.T) {
+		testKey := "just-a-key"
+		assert.True(t, m.Exists(testKey))
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return "thisis-not-expected", nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+	})
+}
+
 func TestPurge(t *testing.T) {
 	// Initialize new cache keeper
 	k := NewKeeper()
