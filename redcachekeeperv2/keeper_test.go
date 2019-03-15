@@ -1,14 +1,13 @@
-package redcachekeeper
+package redcachekeeperv2
 
 import (
 	"encoding/json"
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis"
 	redigo "github.com/gomodule/redigo/redis"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/alicebob/miniredis"
 )
 
 func newRedisConn(url string) *redigo.Pool {
@@ -65,45 +64,6 @@ func TestGetLockStore(t *testing.T) {
 	assert.EqualValues(t, "test-response", res2)
 	assert.Nil(t, mu2)
 	assert.NoError(t, err2)
-}
-
-func TestGetOrSet(t *testing.T) {
-	// Initialize new cache keeper
-	k := NewKeeper()
-
-	m, err := miniredis.Run()
-	assert.NoError(t, err)
-
-	r := newRedisConn(m.Addr())
-	k.SetConnectionPool(r)
-	k.SetLockConnectionPool(r)
-
-	val := "hey this is the result"
-
-	t.Run("No cache", func(t *testing.T) {
-		testKey := "just-a-key"
-		assert.False(t, m.Exists(testKey))
-
-		ttl := 1600 * time.Second
-		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
-			return val, nil
-		}, time.Duration(ttl))
-		assert.NoError(t, err)
-		assert.EqualValues(t, val, retVal)
-		assert.True(t, m.Exists(testKey))
-	})
-
-	t.Run("Already cached", func(t *testing.T) {
-		testKey := "just-a-key"
-		assert.True(t, m.Exists(testKey))
-		ttl := 1600 * time.Second
-		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
-			return "thisis-not-expected", nil
-		}, time.Duration(ttl))
-		assert.NoError(t, err)
-		assert.EqualValues(t, val, retVal)
-		assert.True(t, m.Exists(testKey))
-	})
 }
 
 func TestPurge(t *testing.T) {
@@ -196,4 +156,118 @@ func TestIncreaseCachedValueByOne(t *testing.T) {
 	err = json.Unmarshal(bt, &count)
 	assert.NoError(t, err)
 	assert.EqualValues(t, 1, count)
+}
+
+func TestGetOrSet_NoStat(t *testing.T) {
+	// Initialize new cache keeper
+	k := NewKeeper()
+
+	m, err := miniredis.Run()
+	assert.NoError(t, err)
+
+	statPrefix := "statr:"
+
+	r := newRedisConn(m.Addr())
+	k.SetConnectionPool(r)
+	k.SetLockConnectionPool(r)
+	k.SetStatPrefix(statPrefix)
+	k.SetEnableStat(false)
+
+	val := "hey this is the result"
+
+	t.Run("No cache", func(t *testing.T) {
+		testKey := "just-a-key"
+		assert.False(t, m.Exists(testKey))
+
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return val, nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+		assert.False(t, m.Exists(statPrefix+testKey))
+	})
+
+	t.Run("Already cached", func(t *testing.T) {
+		testKey := "just-a-key"
+		assert.True(t, m.Exists(testKey))
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return "thisis-not-expected", nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+		assert.False(t, m.Exists(statPrefix+testKey))
+	})
+}
+
+func TestGetOrSet_WithStat(t *testing.T) {
+	// Initialize new cache keeper
+	k := NewKeeper()
+
+	m, err := miniredis.Run()
+	assert.NoError(t, err)
+
+	statPrefix := "statr:"
+
+	r := newRedisConn(m.Addr())
+	k.SetConnectionPool(r)
+	k.SetLockConnectionPool(r)
+	k.SetStatPrefix(statPrefix)
+	k.SetEnableStat(true)
+
+	val := "hey this is the result"
+	testKey := "just-a-key"
+
+	t.Run("No cache", func(t *testing.T) {
+		assert.False(t, m.Exists(testKey))
+
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return val, nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+		if got, err := m.Get(statPrefix + testKey); err != nil || got != "1" {
+			t.Errorf("Invalid cache value: %s", got)
+		}
+	})
+
+	t.Run("Already cached", func(t *testing.T) {
+		assert.True(t, m.Exists(testKey))
+		ttl := 1600 * time.Second
+		retVal, err := k.GetOrSet(testKey, func() (i interface{}, e error) {
+			return "thisis-not-expected", nil
+		}, time.Duration(ttl))
+		assert.NoError(t, err)
+		assert.EqualValues(t, val, retVal)
+		assert.True(t, m.Exists(testKey))
+		assert.True(t, m.Exists(statPrefix+testKey))
+		if got, err := m.Get(statPrefix + testKey); err != nil || got != "2" {
+			t.Errorf("Invalid cache value: %s", got)
+		}
+	})
+}
+
+func TestPurgeKeys(t *testing.T) {
+	k := NewKeeper()
+
+	m, err := miniredis.Run()
+	assert.NoError(t, err)
+
+	statPrefix := "statr:"
+
+	r := newRedisConn(m.Addr())
+	k.SetConnectionPool(r)
+	k.SetLockConnectionPool(r)
+	k.SetStatPrefix(statPrefix)
+	k.SetEnableStat(false)
+
+	m.Set("test123", "something-something")
+	assert.True(t, m.Exists("test123"))
+	k.Purge("test123")
+	assert.False(t, m.Exists("test123"))
 }
