@@ -1,4 +1,4 @@
-package redcachekeeper
+package redcachekeeperv2
 
 import (
 	"errors"
@@ -15,6 +15,8 @@ const (
 	defaultLockDuration = 1 * time.Minute
 	defaultLockTries    = 1
 	defaultWaitTime     = 15 * time.Second
+	defaultStatPrefix   = "stat:"
+	defaultEnableStat   = false
 )
 
 type (
@@ -36,6 +38,9 @@ type (
 		SetLockTries(int)
 		SetWaitTime(time.Duration)
 		SetDisableCaching(bool)
+		SetStatPrefix(string)
+		SetEnableStat(bool)
+		ClearStats() error
 	}
 
 	keeper struct {
@@ -47,6 +52,14 @@ type (
 		lockConnPool *redigo.Pool
 		lockDuration time.Duration
 		lockTries    int
+
+		statPrefix string
+		enableStat bool
+	}
+
+	statItem struct {
+		Name  string
+		Count int64
 	}
 )
 
@@ -58,6 +71,8 @@ func NewKeeper() Keeper {
 		lockTries:      defaultLockTries,
 		waitTime:       defaultWaitTime,
 		disableCaching: false,
+		statPrefix:     defaultStatPrefix,
+		enableStat:     defaultEnableStat,
 	}
 }
 
@@ -67,7 +82,7 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 		return
 	}
 
-	cachedItem, err = k.getCachedItem(key)
+	cachedItem, err = k.getCachedItem(key, true)
 	if err != nil && err != redigo.ErrNil || cachedItem != nil {
 		return
 	}
@@ -86,7 +101,7 @@ func (k *keeper) GetOrLock(key string) (cachedItem interface{}, mutex *redsync.M
 		}
 
 		if !k.isLocked(key) {
-			cachedItem, err = k.getCachedItem(key)
+			cachedItem, err = k.getCachedItem(key, false)
 			if err != nil && err != redigo.ErrNil || cachedItem != nil {
 				return
 			}
@@ -145,7 +160,7 @@ func (k *keeper) Store(mutex *redsync.Mutex, c Item) error {
 	return err
 }
 
-// Purge :nodoc:
+// rgrge :nodoc:
 func (k *keeper) Purge(matchString string) error {
 	if k.disableCaching {
 		return nil
@@ -163,13 +178,14 @@ func (k *keeper) Purge(matchString string) error {
 		return errors.New("redcachekeeper: No matching keys")
 	}
 
-	client.Send("MULTI")
-	for _, k := range keys {
-		client.Send("DEL", k)
-	}
-	_, err = client.Do("EXEC")
+	_, err = client.Do("DEL", keys...)
 
 	return err
+}
+
+// ClearStats :nodoc:
+func (k *keeper) ClearStats() error {
+	return k.Purge(k.statPrefix + "*")
 }
 
 // IncreaseCachedValueByOne will increments the number stored at key by one.
@@ -221,6 +237,16 @@ func (k *keeper) SetDisableCaching(b bool) {
 	k.disableCaching = b
 }
 
+// SetStatPrefix :nodoc:
+func (k *keeper) SetStatPrefix(s string) {
+	k.statPrefix = s
+}
+
+// SetEnableStat :nodoc:
+func (k *keeper) SetEnableStat(b bool) {
+	k.enableStat = b
+}
+
 // AcquireLock :nodoc:
 func (k *keeper) AcquireLock(key string) (*redsync.Mutex, error) {
 	r := redsync.New([]redsync.Pool{k.lockConnPool})
@@ -239,11 +265,23 @@ func (k *keeper) decideCacheTTL(c Item) float64 {
 	return k.defaultTTL.Seconds()
 }
 
-func (k *keeper) getCachedItem(key string) (value interface{}, err error) {
+func (k *keeper) getCachedItem(key string, setStat bool) (value interface{}, err error) {
 	client := k.connPool.Get()
 	defer client.Close()
 
-	return client.Do("GET", key)
+	if !setStat || !k.enableStat {
+		return client.Do("GET", key)
+	}
+
+	client.Send("MULTI")
+	client.Send("GET", key)
+	client.Send("INCR", k.statPrefix+key)
+	r, err := redigo.Values(client.Do("EXEC"))
+	if err != nil {
+		return
+	}
+
+	return r[0], nil
 }
 
 func (k *keeper) isLocked(key string) bool {

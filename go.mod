@@ -6,9 +6,10 @@ require (
 	github.com/Shopify/sarama v1.20.0
 	github.com/Shopify/toxiproxy v2.1.3+incompatible // indirect
 	github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6 // indirect
-	github.com/alicebob/miniredis v2.4.5+incompatible
+	github.com/alicebob/miniredis v2.4.6+incompatible
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
+	github.com/corpix/uarand v0.0.0 // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -24,6 +25,8 @@ require (
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
 	github.com/hashicorp/raft v1.0.0 // indirect
+	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428
+	github.com/jasonlvhit/gocron v0.0.0-20190121134850-6771d4b492ba
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7
