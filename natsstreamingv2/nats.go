@@ -46,8 +46,8 @@ type (
 	}
 
 	NatsMessageWithSubject struct {
-		Subject string      `json:"subject"`
-		Message interface{} `json:"message"`
+		Subject string `json:"subject"`
+		Message []byte `json:"message"`
 	}
 
 	// natsInfo contains informations that will be use to reconnecting to nats streaming
@@ -200,7 +200,7 @@ func (n *NATS) Publish(subject string, v interface{}) error {
 		defer client.Close()
 		i, err := redigo.Int(client.Do("RPUSH", failedMessagesRedisKey, utils.ToByte(NatsMessageWithSubject{
 			Subject: subject,
-			Message: v,
+			Message: utils.ToByte(v),
 		})))
 		if err != nil {
 			log.WithFields(log.Fields{
@@ -280,7 +280,7 @@ func (n *NATS) publishFromRedis() {
 		err = json.Unmarshal(b, msg)
 		if err == nil {
 			if n.conn != nil {
-				err = n.conn.Publish(msg.Subject, utils.ToByte(msg.Message))
+				err = n.conn.Publish(msg.Subject, msg.Message)
 				if err == nil {
 					continue
 				}
