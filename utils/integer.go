@@ -64,3 +64,24 @@ func Int32PointerToInt32(i *int32) int32 {
 	}
 	return 0
 }
+
+// IsSameSliceIgnoreOrder to compare slice without order
+func IsSameSliceIgnoreOrder(a, b []int64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	diff := make(map[int64]bool, len(a))
+	for _, v := range a {
+		diff[v] = true
+	}
+	for _, v := range b {
+		if _, ok := diff[v]; !ok {
+			return false
+		}
+		delete(diff, v)
+	}
+	if len(diff) == 0 {
+		return true
+	}
+	return false
+}
