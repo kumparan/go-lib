@@ -25,6 +25,7 @@ type (
 		GetOrLock(string) (interface{}, *redsync.Mutex, error)
 		GetOrSet(string, CacheGeneratorFn, time.Duration) (interface{}, error)
 		Store(*redsync.Mutex, Item) error
+		StoreWithoutBlocking(Item) error
 		Purge(string) error
 		IncreaseCachedValueByOne(key string) error
 
@@ -137,6 +138,19 @@ func (k *keeper) Store(mutex *redsync.Mutex, c Item) error {
 		return nil
 	}
 	defer mutex.Unlock()
+
+	client := k.connPool.Get()
+	defer client.Close()
+
+	_, err := client.Do("SETEX", c.GetKey(), k.decideCacheTTL(c), c.GetValue())
+	return err
+}
+
+// StoreWithoutBlocking :nodoc:
+func (k *keeper) StoreWithoutBlocking(c Item) error {
+	if k.disableCaching {
+		return nil
+	}
 
 	client := k.connPool.Get()
 	defer client.Close()
