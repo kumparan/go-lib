@@ -301,6 +301,7 @@ func (n *NATS) publishFromRedis() {
 				"from":  "publishFromRedis",
 				"value": string(b),
 			}).Error(errRedis)
+			return
 		}
 
 		if err == stan.ErrConnectionClosed {
