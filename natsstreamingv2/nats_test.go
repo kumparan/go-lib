@@ -128,7 +128,7 @@ func TestRunningWorkerAfterLostConnection(t *testing.T) {
 	}
 
 	if b != 10 {
-		t.Fatal("Error value must be 1")
+		t.Fatal("Error value must be 10")
 	}
 
 	server = runAnotherServer(port)
@@ -153,6 +153,6 @@ func TestRunningWorkerAfterLostConnection(t *testing.T) {
 	}
 
 	if b != 10 {
-		t.Fatal("Error value must be 1")
+		t.Fatal("Error value must be 10")
 	}
 }
