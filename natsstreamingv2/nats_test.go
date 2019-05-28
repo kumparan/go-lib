@@ -131,11 +131,6 @@ func TestRunningWorkerAfterLostConnection(t *testing.T) {
 		t.Fatal("Error value must be 10")
 	}
 
-	server = runAnotherServer(port)
-	defer server.Shutdown()
-
-	time.Sleep(20 * time.Second) // wait for making connection
-
 	var wg2 sync.WaitGroup
 	for _, conn := range natsConn {
 		wg2.Add(1)
