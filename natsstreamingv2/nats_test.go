@@ -142,7 +142,7 @@ func TestRunningWorkerAfterLostConnection(t *testing.T) {
 
 	wg2.Wait()
 
-	b, err = redigo.Int(client.Do("llen", failedMessagesRedisKey))
+	b, err = redigo.Int(client.Do("llen", deadMessageRedisKey))
 	if err != nil {
 		t.Fatal(err)
 	}
