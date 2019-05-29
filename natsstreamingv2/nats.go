@@ -62,6 +62,7 @@ type (
 
 const (
 	failedMessagesRedisKey   = "nats:failed-messages"
+	deadMessageRedisKey      = "nats:dead-messages"
 	defaultReconnectInterval = 500 * time.Millisecond
 )
 
@@ -287,9 +288,26 @@ func (n *NATS) publishFromRedis() {
 			}
 		}
 
-		client.Do("LPUSH", failedMessagesRedisKey, b)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"from":  "publishFromRedis",
+				"value": string(b),
+			}).Error(err)
+		}
+
+		_, errRedis := client.Do("RPUSH", deadMessageRedisKey, b)
+		if errRedis != nil {
+			log.WithFields(log.Fields{
+				"from":  "publishFromRedis",
+				"value": string(b),
+			}).Error(errRedis)
+			return
+		}
+
 		if err == stan.ErrConnectionClosed {
-			log.Error("abort due to connection problem")
+			log.WithFields(log.Fields{
+				"from": "publishFromRedis",
+			}).Error("Error nats connection closed")
 			return
 		}
 	}

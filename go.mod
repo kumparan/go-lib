@@ -9,7 +9,6 @@ require (
 	github.com/alicebob/miniredis v2.4.6+incompatible
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
-	github.com/corpix/uarand v0.0.0 // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
@@ -25,19 +24,19 @@ require (
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
 	github.com/hashicorp/raft v1.0.0 // indirect
-	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428
 	github.com/jasonlvhit/gocron v0.0.0-20190121134850-6771d4b492ba
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/joho/godotenv v1.3.0
 	github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7
 	github.com/kelseyhightower/envconfig v1.3.0
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
-	github.com/nats-io/gnatsd v1.3.0 // indirect
+	github.com/nats-io/gnatsd v1.3.0
 	github.com/nats-io/go-nats v1.7.0 // indirect
 	github.com/nats-io/go-nats-streaming v0.4.0
-	github.com/nats-io/nats-streaming-server v0.11.2 // indirect
+	github.com/nats-io/nats-streaming-server v0.11.2
 	github.com/nats-io/nkeys v0.0.2 // indirect
 	github.com/nats-io/nuid v1.0.0 // indirect
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
@@ -46,10 +45,12 @@ require (
 	github.com/prometheus/client_golang v0.9.2
 	github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a // indirect
 	github.com/sirupsen/logrus v1.2.0
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
 	github.com/yuin/gopher-lua v0.0.0-20181212084658-d1ab6d058001 // indirect
-	google.golang.org/appengine v1.3.0 // indirect
+	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
+	google.golang.org/appengine v1.5.0 // indirect
 	google.golang.org/grpc v1.17.0
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
