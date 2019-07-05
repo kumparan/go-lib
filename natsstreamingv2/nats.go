@@ -214,7 +214,7 @@ func (n *NATS) Publish(subject string, v interface{}) error {
 			log.Errorf("total message that handled by redis : %+v", i)
 		}
 	} else {
-		log.Fatal("publish to nats failed and no redis conection available to handle it")
+		log.Error("publish to nats failed and no redis conection available to handle it")
 	}
 	return nil
 }
