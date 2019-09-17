@@ -85,3 +85,12 @@ func IsSameSliceIgnoreOrder(a, b []int64) bool {
 	}
 	return false
 }
+
+// SizeOrMaxInt64 -> Check size value bigger or not from max.
+func SizeOrMaxInt64(size int64, max int64) int64 {
+	if size < 0 || size > max {
+		return max
+	}
+
+	return size
+}
