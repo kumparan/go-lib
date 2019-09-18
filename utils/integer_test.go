@@ -41,14 +41,15 @@ func TestIsSameSliceIgnoreOrder(t *testing.T) {
 	assert.True(t, IsSameSliceIgnoreOrder(a, b))
 }
 
-func TestSizeOrMaxInt64(t *testing.T) {
+func TestLimitInt64(t *testing.T) {
 	a := int64(5)
 	b := int64(10)
 	c := int64(15)
+	d := int64(-1)
 
-	assert.Equal(t, a, SizeOrMaxInt64(b,a))
-	assert.Equal(t, b, SizeOrMaxInt64(b,c))
-
-	assert.NotEqual(t, c, SizeOrMaxInt64(c,a))
+	assert.Equal(t, a, LimitInt64(b, a))
+	assert.Equal(t, b, LimitInt64(b, c))
+	assert.Equal(t, a, LimitInt64(d, a))
+	assert.NotEqual(t, c, LimitInt64(c, a))
 
 }
