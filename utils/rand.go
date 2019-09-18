@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 )
 
-// Adapted from https://elithrar.github.io/article/generating-secure-random-numbers-crypto-rand/
+// GenerateRandomBytes adapted from https://elithrar.github.io/article/generating-secure-random-numbers-crypto-rand/
 // GenerateRandomBytes returns securely generated random bytes.
 // It will return an error if the system's secure random
 // number generator fails to function correctly, in which

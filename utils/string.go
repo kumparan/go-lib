@@ -89,14 +89,11 @@ func StringPointer2Float64(s *string) float64 {
 
 // StringPointer2Int64 :nodoc:
 func StringPointer2Int64(s *string) int64 {
-	if s != nil {
-		i, err := strconv.ParseInt(*s, 10, 64)
-		if err != nil {
-			return int64(0)
-		}
-		return i
+	if s == nil {
+		return int64(0)
 	}
-	return int64(0)
+
+	return String2Int64(*s)
 }
 
 // ArrayStringPointer2ArrayInt64 :nodoc:
