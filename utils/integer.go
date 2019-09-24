@@ -87,10 +87,10 @@ func IsSameSliceIgnoreOrder(a, b []int64) bool {
 }
 
 // Int64WithLimit -> Check req value bigger or not from limit.
-func Int64WithLimit(req int64, limit int64) int64 {
-	if req < 0 || req > limit {
+func Int64WithLimit(input int64, limit int64) int64 {
+	if input < 0 || input > limit {
 		return limit
 	}
 
-	return req
+	return input
 }
