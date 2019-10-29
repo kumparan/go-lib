@@ -1,6 +1,7 @@
 package url
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -19,35 +20,42 @@ var usesNetloc = []string{"", "ftp", "http", "gopher", "nntp", "telnet",
 var schemeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-."
 
 // Join :nodoc:
-func Join(base, url string) string {
+func Join(base, url string) (string, error) {
 	if len(base) == 0 {
-		return url
+		return url, nil
 	}
 
 	if len(url) == 0 {
-		return base
+		return base, nil
 	}
 
-	bscheme, bnetloc, bpath := urlSplit(base)
-	scheme, netloc, path := urlSplit(url)
+	bscheme, bnetloc, bpath, err := urlSplit(base)
+	if err != nil {
+		return "", err
+	}
+	scheme, netloc, path, err := urlSplit(url)
+	if err != nil {
+		return "", err
+	}
+
 	if scheme == "" {
 		scheme = bscheme
 	}
 
 	if scheme != bscheme || !existInArray(usesRelative, scheme) {
-		return url
+		return url, nil
 	}
 
 	if existInArray(usesNetloc, scheme) {
 		if len(netloc) > 0 {
-			return urlUnsplit(scheme, netloc, path)
+			return urlUnsplit(scheme, netloc, path), nil
 		}
 		netloc = bnetloc
 	}
 
 	if len(path) == 0 {
 		path = bpath
-		return urlUnsplit(scheme, netloc, path)
+		return urlUnsplit(scheme, netloc, path), nil
 	}
 
 	baseParts := strings.Split(bpath, "/")
@@ -70,8 +78,7 @@ func Join(base, url string) string {
 	resolvedPath := make([]string, 0)
 	for _, v := range segments {
 		if v == ".." {
-			// SHOULD RETURN ERROR
-			fmt.Println("Should Error")
+			return "", errors.New("error when resolving path")
 		} else if v == "." {
 			continue
 		} else {
@@ -84,10 +91,10 @@ func Join(base, url string) string {
 	}
 
 	path = strings.Join(resolvedPath, "/")
-	return urlUnsplit(scheme, netloc, path)
+	return urlUnsplit(scheme, netloc, path), nil
 }
 
-func urlSplit(url string) (scheme, netloc, path string) {
+func urlSplit(url string) (scheme, netloc, path string, err error) {
 	if strings.Contains(url, ":") {
 		var posColon int
 		for i, v := range url {
@@ -98,7 +105,7 @@ func urlSplit(url string) (scheme, netloc, path string) {
 		}
 		for _, v := range url[:posColon] {
 			if !strings.Contains(schemeChars, string(v)) {
-				// Do Nothing
+				break
 			}
 		}
 		scheme = strings.ToLower(url[:posColon])
@@ -109,8 +116,7 @@ func urlSplit(url string) (scheme, netloc, path string) {
 		netloc, url = splitnetloc(url, 2)
 		if (strings.Contains(netloc, "[") && !strings.Contains(netloc, "]")) ||
 			(!strings.Contains(netloc, "[") && strings.Contains(netloc, "]")) {
-			fmt.Println("Error")
-			return "", "", ""
+			return "", "", "", errors.New("error when url split")
 		}
 	}
 
@@ -118,7 +124,7 @@ func urlSplit(url string) (scheme, netloc, path string) {
 		url = ""
 	}
 
-	return scheme, netloc, url
+	return scheme, netloc, url, nil
 }
 
 func splitnetloc(url string, start int) (domain, rest string) {
