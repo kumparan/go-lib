@@ -1,7 +1,6 @@
 package url
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +20,6 @@ func Test_UrlJoin(t *testing.T) {
 	t.Run("base empty", func(t *testing.T) {
 		url := "trending"
 		resURL, err := Join(emptyString, url)
-		fmt.Println(resURL)
 		assert.Equal(t, url, resURL)
 		assert.NoError(t, err)
 	})
@@ -29,7 +27,6 @@ func Test_UrlJoin(t *testing.T) {
 	t.Run("if url have a scheme", func(t *testing.T) {
 		url := "https://magneto.com/feed"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, url, resURL)
 		assert.NoError(t, err)
 	})
@@ -37,7 +34,6 @@ func Test_UrlJoin(t *testing.T) {
 	t.Run("if url is a directory", func(t *testing.T) {
 		url := "/category/news"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, "https://kumparan.com/category/news", resURL)
 		assert.NoError(t, err)
 	})
@@ -46,7 +42,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "https://kumparan.com/feed/category/news"
 		url := "kumparan.com/feed"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, "https://kumparan.com/feed/category/kumparan.com/feed", resURL)
 		assert.NoError(t, err)
 	})
@@ -55,7 +50,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "kumparan.com/trending"
 		url := "/category/news"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, url, resURL)
 		assert.NoError(t, err)
 	})
@@ -64,7 +58,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "kumparan.com/trending"
 		url := "category/news"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, "kumparan.com/category/news", resURL)
 		assert.NoError(t, err)
 	})
@@ -73,7 +66,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "https://kumparan.com/trending/feed"
 		url := "../indo.nesia/news"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, "https://kumparan.com/indo.nesia/news", resURL)
 		assert.NoError(t, err)
 
@@ -81,7 +73,7 @@ func Test_UrlJoin(t *testing.T) {
 			baseURL := "https://kumparan.com/trending/feed"
 			url := "sepakbola/.."
 			resURL, err := Join(baseURL, url)
-			fmt.Println(resURL)
+
 			assert.Equal(t, "https://kumparan.com/trending/", resURL)
 			assert.NoError(t, err)
 
@@ -92,7 +84,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "https://kumparan.com/trending/feed"
 		url := "./indo.nesia/news"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, "https://kumparan.com/trending/indo.nesia/news", resURL)
 		assert.NoError(t, err)
 	})
@@ -101,7 +92,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "https://kumparan.com/trending/feed"
 		url := "http://kumparan.com/trending"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, url, resURL)
 		assert.NoError(t, err)
 	})
@@ -110,7 +100,6 @@ func Test_UrlJoin(t *testing.T) {
 		baseURL := "https://kumparan.com/trending/feed"
 		url := "https://"
 		resURL, err := Join(baseURL, url)
-		fmt.Println(resURL)
 		assert.Equal(t, baseURL, resURL)
 		assert.NoError(t, err)
 	})
