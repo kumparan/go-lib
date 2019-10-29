@@ -68,4 +68,50 @@ func Test_UrlJoin(t *testing.T) {
 		assert.Equal(t, "kumparan.com/category/news", resURL)
 		assert.NoError(t, err)
 	})
+
+	t.Run("if url have \"..\"", func(t *testing.T) {
+		baseURL := "https://kumparan.com/trending/feed"
+		url := "../indo.nesia/news"
+		resURL, err := Join(baseURL, url)
+		fmt.Println(resURL)
+		assert.Equal(t, "https://kumparan.com/indo.nesia/news", resURL)
+		assert.NoError(t, err)
+
+		t.Run("if url have \"..\" on the last element", func(t *testing.T) {
+			baseURL := "https://kumparan.com/trending/feed"
+			url := "sepakbola/.."
+			resURL, err := Join(baseURL, url)
+			fmt.Println(resURL)
+			assert.Equal(t, "https://kumparan.com/trending/", resURL)
+			assert.NoError(t, err)
+
+		})
+	})
+
+	t.Run("if url have \".\"", func(t *testing.T) {
+		baseURL := "https://kumparan.com/trending/feed"
+		url := "./indo.nesia/news"
+		resURL, err := Join(baseURL, url)
+		fmt.Println(resURL)
+		assert.Equal(t, "https://kumparan.com/trending/indo.nesia/news", resURL)
+		assert.NoError(t, err)
+	})
+
+	t.Run("if url have a different scheme than baseURL", func(t *testing.T) {
+		baseURL := "https://kumparan.com/trending/feed"
+		url := "http://kumparan.com/trending"
+		resURL, err := Join(baseURL, url)
+		fmt.Println(resURL)
+		assert.Equal(t, url, resURL)
+		assert.NoError(t, err)
+	})
+
+	t.Run("if url have no path", func(t *testing.T) {
+		baseURL := "https://kumparan.com/trending/feed"
+		url := "https://"
+		resURL, err := Join(baseURL, url)
+		fmt.Println(resURL)
+		assert.Equal(t, baseURL, resURL)
+		assert.NoError(t, err)
+	})
 }
