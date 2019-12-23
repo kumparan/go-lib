@@ -108,6 +108,7 @@ func urlSplit(url string) (scheme, netloc, path string, err error) {
 			// 58 rune for ":"
 			if v == 58 {
 				posColon = i
+				break
 			}
 		}
 		for _, v := range url[:posColon] {

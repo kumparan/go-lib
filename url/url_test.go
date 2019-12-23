@@ -103,4 +103,13 @@ func Test_UrlJoin(t *testing.T) {
 		assert.Equal(t, baseURL, resURL)
 		assert.NoError(t, err)
 	})
+
+	t.Run("if url have port", func(t *testing.T) {
+		baseURL := "https://192.168.1:3000/trending/feed"
+		url := "/story"
+		expectedURL := "https://192.168.1:3000/story"
+		resURL, err := Join(baseURL, url)
+		assert.Equal(t, expectedURL, resURL)
+		assert.NoError(t, err)
+	})
 }
